@@ -2,7 +2,7 @@ import serial
 import json
 import time
 import paho.mqtt.client as mqtt
-import serial.tools.list_ports
+# import serial.tools.list_ports
 
 # only for windows
 
@@ -23,21 +23,23 @@ client.connect(broker, port)
 client.loop_start()  # important for stable connection
 
 # -------- SERIAL CONFIG --------
-# SERIAL_PORT = "/dev/ttyACM0"
+SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 9600
 RETRY_INTERVAL = 5  # seconds
 device_id = 1
 
-def get_serial_port():
-    """Get the first available serial port on Windows"""
-    ports = serial.tools.list_ports.comports()
-    for port in ports:
-        if "COM5" in port.device:
-            print("Found serial port: {port.device}")
-            return port.device
-    raise Exception("No serial port found")
+# -------- For windows --------
+# def get_serial_port():
+#     """Get the first available serial port on Windows"""
+#     ports = serial.tools.list_ports.comports()
+#     for port in ports:
+#         if "COM5" in port.device:
+#             print("Found serial port: {port.device}")
+#             return port.device
+#     raise Exception("No serial port found")
 
-SERIAL_PORT = get_serial_port()
+
+# SERIAL_PORT = get_serial_port()
 print("Using serial port: {SERIAL_PORT}")
 
 def connect_serial():
