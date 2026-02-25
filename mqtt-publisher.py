@@ -33,12 +33,12 @@ def get_serial_port():
     ports = serial.tools.list_ports.comports()
     for port in ports:
         if "COM5" in port.device:
-            print(f"Found serial port: {port.device}")
+            print("Found serial port: {port.device}")
             return port.device
     raise Exception("No serial port found")
 
 SERIAL_PORT = get_serial_port()
-print(f"Using serial port: {SERIAL_PORT}")
+print("Using serial port: {SERIAL_PORT}")
 
 def connect_serial():
     """Attempt to connect to Arduino serial"""
