@@ -28,7 +28,7 @@ ModbusMaster node;
 // ---------------- FAN CONTROL ----------------
 unsigned long fanOnUntil = 0;
 const unsigned long FAN_MIN_ON_MS = 120000UL; // 2 min
-
+int pirIndex = 90;
 // ---------------- RS485 CONTROL ----------------
 void preTransmission() { digitalWrite(REDE_PIN, HIGH); }
 void postTransmission(){ digitalWrite(REDE_PIN, LOW); }
@@ -73,7 +73,7 @@ void loop() {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     int pirState = digitalRead(PIRPIN);
-
+    
     float wind = readWind();
     if(wind < 0) wind = 0;
 
@@ -87,35 +87,44 @@ void loop() {
 
     // --- Comfort Based Speed ---
     if(effectiveTemp < 24){
-    baseSpeed = 0;
+        baseSpeed = 0;
     }
     else if(effectiveTemp < 26){
-    baseSpeed = 30;
+        baseSpeed = 30;
     }
     else if(effectiveTemp < 28){
-    baseSpeed = 50;
+        baseSpeed = 50;
     }
     else if(effectiveTemp < 30){
-    baseSpeed = 70;
+        baseSpeed = 70;
     }
     else{
-    baseSpeed = 90;
+        baseSpeed = 90;
+    }
+
+    // --- reducing the sensitivity of PIR sensor to avoid false positives ---
+    if(pirState == LOW && pirIndex > 0){
+        pirIndex=pirIndex-1;
+    }
+    else if(pirState == HIGH && pirIndex < 90){
+        pirIndex=pirIndex+1;
     }
 
     // --- Presence Adjustment ---
-    if(pirState == LOW){
-    baseSpeed = baseSpeed * 0.4;  // reduce to 40% if no one present
+    if(pirIndex == 0){
+        baseSpeed = 0;  // reduce to 40% if no one present
+        pirIndex = 90;
     }
 
     // --- Wind Reduction Logic ---
     if(wind >= 5){
-    baseSpeed = 0;
+        baseSpeed = 0;
     }
     else if(wind >= 3){
-    baseSpeed *= 0.6;
+        baseSpeed *= 0.6;
     }
     else if(wind >= 1){
-    baseSpeed *= 0.8;
+        baseSpeed *= 0.8;
     }
 
     speed = constrain(baseSpeed, 0, 100);
@@ -123,13 +132,13 @@ void loop() {
     fanFlag = (speed > 0) ? 1 : 0;
 
     // ---- 2-MIN MINIMUM FAN RUNTIME ----
-    unsigned long now = millis();
-    if(speed > 0){
-        if(fanOnUntil < now) fanOnUntil = now + FAN_MIN_ON_MS;
-    } else if(fanOnUntil > now){
-        speed = 50;
-        fanFlag = 1;
-    }
+    // unsigned long now = millis();
+    // if(speed > 0){
+    //     if(fanOnUntil < now) fanOnUntil = now + FAN_MIN_ON_MS;
+    // } else if(fanOnUntil > now){
+    //     speed = 50;
+    //     fanFlag = 1;
+    // }
 
     // ---- MOTOR CONTROL ----
     if(speed > 0){
