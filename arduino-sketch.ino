@@ -168,15 +168,7 @@ void loop() {
 
     } while(u8g2.nextPage());
 
-    // ---- SERIAL DEBUG ----
-    //Serial.print("Temp: "); Serial.print(t);
-    //Serial.print(" Hum: "); Serial.print(h);
-    //Serial.print(" Wind: "); Serial.print(wind);
-    //Serial.print(" PIR: "); Serial.print(pirState);
-    //Serial.print(" Fan: "); Serial.print(fanFlag);
-    //Serial.print(" Speed: "); Serial.println(speed);
-
-    // Output data to the serial monitor
+    // Output data to the serial port to Raspberry Pi
     // Temp: 25.30 Hum: 59.70 Wind: 0.00 PIR: 0 Fan: 1 Speed: 50
     Serial.print(t);
     Serial.print(",");
