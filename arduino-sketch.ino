@@ -28,7 +28,9 @@ ModbusMaster node;
 // ---------------- FAN CONTROL ----------------
 unsigned long fanOnUntil = 0;
 const unsigned long FAN_MIN_ON_MS = 120000UL; // 2 min
-int pirIndex = 90;
+const fanOffDelay = 90; // delay uints
+
+int pirIndex = fanOffDelay;
 // ---------------- RS485 CONTROL ----------------
 void preTransmission() { digitalWrite(REDE_PIN, HIGH); }
 void postTransmission(){ digitalWrite(REDE_PIN, LOW); }
@@ -106,14 +108,13 @@ void loop() {
     if(pirState == LOW && pirIndex > 0){
         pirIndex=pirIndex-1;
     }
-    else if(pirState == HIGH && pirIndex < 90){
-        pirIndex=pirIndex+1;
+    else if(pirState == HIGH ){
+        pirIndex=fanOffDelay;
     }
 
     // --- Presence Adjustment ---
     if(pirIndex == 0){
         baseSpeed = 0;  // reduce to 40% if no one present
-        pirIndex = 90;
     }
 
     // --- Wind Reduction Logic ---
