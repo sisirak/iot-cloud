@@ -114,7 +114,7 @@ void loop() {
 
     // --- Presence Adjustment ---
     if(pirIndex == 0){
-        baseSpeed = 0;  // reduce to 40% if no one present
+        baseSpeed = 0;  
     }
 
     // --- Wind Reduction Logic ---
@@ -132,14 +132,6 @@ void loop() {
 
     fanFlag = (speed > 0) ? 1 : 0;
 
-    // ---- 2-MIN MINIMUM FAN RUNTIME ----
-    // unsigned long now = millis();
-    // if(speed > 0){
-    //     if(fanOnUntil < now) fanOnUntil = now + FAN_MIN_ON_MS;
-    // } else if(fanOnUntil > now){
-    //     speed = 50;
-    //     fanFlag = 1;
-    // }
 
     // ---- MOTOR CONTROL ----
     if(speed > 0){
